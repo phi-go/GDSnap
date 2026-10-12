@@ -55,9 +55,8 @@ func _get_scene_root_script(scene: PackedScene) -> Variant:
 ## Recursively checks if a node inherits from the ScreenshotTest class.
 ## Returns true if it does, false otherwise
 func _check_if_screenshot_test(script: Script) -> bool:
+	if script == null:
+		return false
 	if script.get_global_name() == "ScreenshotTest":
 		return true
-	elif script.get_base_script() != null:
-		return _check_if_screenshot_test(script.get_base_script())
-	else:
-		return false
+	return _check_if_screenshot_test(script.get_base_script())
