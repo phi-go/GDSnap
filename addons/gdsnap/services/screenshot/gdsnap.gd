@@ -32,9 +32,13 @@ static func take_screenshot(shot_name: String, viewport: Viewport) -> Comparison
 	return CompareScreenshotUseCase.new(viewport).run(shot_name)
 
 static func on_test_begin(test: ScreenshotTest) -> void:
+	instance._running_tests.append(test)
 	instance.report.on_test_begin(test)
 
 static func on_test_end(test: ScreenshotTest, diff_result: ComparisonResult) -> void:
+	if not instance._running_tests.has(test):
+		return  # timeout fired after the test already ended
+	instance._running_tests.erase(test)
 	instance.report.on_test_end(test, diff_result)
 	if instance._running_tests.size() <= 0:
 		instance.report.generate_results_file()
