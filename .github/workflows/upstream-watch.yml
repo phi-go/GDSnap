@@ -1,0 +1,26 @@
+# Opens an issue when Nokorpo/GDSnap main has commits this fork lacks.
+name: Upstream watch
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ahead=$(gh api "repos/$GH_REPO/compare/main...Nokorpo:main" --jq .ahead_by)
+          echo "upstream ahead by $ahead"
+          [ "$ahead" -gt 0 ] || exit 0
+          title="Upstream has new commits"
+          # One open issue at a time; close it after syncing.
+          [ -z "$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[].number')" ] || exit 0
+          gh issue create --title "$title" --body "Nokorpo/GDSnap main is $ahead commit(s) ahead of this fork: https://github.com/$GH_REPO/compare/main...Nokorpo:main"
