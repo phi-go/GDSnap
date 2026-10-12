@@ -1,5 +1,5 @@
 class_name DiffData
-extends Node
+extends RefCounted
 
 static var ERROR: DiffData = DiffData.new(-1, -1, [])
 

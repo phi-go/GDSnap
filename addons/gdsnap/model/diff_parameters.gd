@@ -1,5 +1,5 @@
 class_name DiffParams
-extends Node
+extends RefCounted
 
 var original: PackedByteArray = PackedByteArray()
 var new_shot: PackedByteArray = PackedByteArray()
